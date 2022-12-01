@@ -7,6 +7,7 @@ class TextWidget extends StatelessWidget {
       this.fontSize = 16,
       this.opacity,
       this.child,
+      this.color = Colors.white,
       this.align = TextAlign.left});
 
   final String text;
@@ -14,10 +15,11 @@ class TextWidget extends StatelessWidget {
   final dynamic opacity;
   final TextAlign align;
   final dynamic child;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
-    TextStyle textStyle = TextStyle(color: Colors.white, fontSize: fontSize);
+    TextStyle textStyle = TextStyle(color: color, fontSize: fontSize);
 
     if (opacity != null) {
       return Opacity(

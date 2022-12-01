@@ -10,6 +10,7 @@ class TextFieldWidget extends StatelessWidget {
       this.type = constants.textField,
       this.hint = '',
       this.onChanged,
+      this.errorMsg,
       required this.validator});
 
   final TextEditingController controller;
@@ -18,6 +19,7 @@ class TextFieldWidget extends StatelessWidget {
   final String type;
   final String hint;
   final dynamic onChanged;
+  final String? errorMsg;
 
   @override
   Widget build(BuildContext context) {
@@ -34,11 +36,57 @@ class TextFieldWidget extends StatelessWidget {
                   )
                 : Container(),
             TextFormField(
+                style: TextStyle(
+                    color: const Color(0xffffffff).withOpacity(0.87),
+                    fontSize: 16),
+                controller: controller,
+                decoration: InputDecoration(
+                  hintText: hint,
+                  errorText: errorMsg,
+                  hintStyle:
+                      const TextStyle(fontSize: 16, color: Color(0xff535353)),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(4),
+                    borderSide: const BorderSide(
+                      color: Colors.white,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(4),
+                    borderSide: const BorderSide(
+                      color: Colors.white,
+                      width: 0.8,
+                    ),
+                  ),
+                ),
+                validator: validator,
+                obscureText: true,
+                enableSuggestions: false,
+                autocorrect: false,
+                onChanged: onChanged),
+          ],
+        ),
+      );
+    }
+
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          label.isNotEmpty
+              ? Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: TextWidget(text: label, fontSize: 16, opacity: 0.87),
+                )
+              : Container(),
+          TextFormField(
               style: TextStyle(
                   color: const Color(0xffffffff).withOpacity(0.87),
                   fontSize: 16),
               controller: controller,
               decoration: InputDecoration(
+                errorText: errorMsg,
                 hintText: hint,
                 hintStyle:
                     const TextStyle(fontSize: 16, color: Color(0xff535353)),
@@ -57,52 +105,7 @@ class TextFieldWidget extends StatelessWidget {
                 ),
               ),
               validator: validator,
-              obscureText: true,
-              enableSuggestions: false,
-              autocorrect: false,
-              onChanged: onChanged
-            ),
-          ],
-        ),
-      );
-    }
-
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          label.isNotEmpty
-              ? Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: TextWidget(text: label, fontSize: 16, opacity: 0.87),
-                )
-              : Container(),
-          TextFormField(
-            style: TextStyle(
-                color: const Color(0xffffffff).withOpacity(0.87), fontSize: 16),
-            controller: controller,
-            decoration: InputDecoration(
-              hintText: hint,
-              hintStyle:
-                  const TextStyle(fontSize: 16, color: Color(0xff535353)),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(4),
-                borderSide: const BorderSide(
-                  color: Colors.white,
-                ),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(4),
-                borderSide: const BorderSide(
-                  color: Colors.white,
-                  width: 0.8,
-                ),
-              ),
-            ),
-            validator: validator,
-            onChanged: onChanged
-          ),
+              onChanged: onChanged),
         ],
       ),
     );

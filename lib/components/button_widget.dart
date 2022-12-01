@@ -8,6 +8,7 @@ class ButtonWidget extends StatelessWidget {
       required this.onPressed,
       this.outline = false,
       this.borderColor = const Color(0xff8875FF),
+      this.backgroundColor = const Color(0xff8875FF),
       required this.child,
       this.opacity});
 
@@ -17,6 +18,7 @@ class ButtonWidget extends StatelessWidget {
   final bool outline;
   final Widget child;
   final Color borderColor;
+  final Color backgroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,7 @@ class ButtonWidget extends StatelessWidget {
       return OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
-            backgroundColor: const Color(0xff8875FF).withOpacity(opacity),
+            backgroundColor: backgroundColor.withOpacity(opacity),
             minimumSize: const Size.fromHeight(40)),
         child: child,
       );
@@ -35,8 +37,7 @@ class ButtonWidget extends StatelessWidget {
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
             minimumSize: const Size.fromHeight(40),
-            side: BorderSide(color: borderColor)
-        ),
+            side: BorderSide(color: borderColor)),
         child: child,
       );
     }
@@ -44,7 +45,7 @@ class ButtonWidget extends StatelessWidget {
     return OutlinedButton(
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
-          backgroundColor: const Color(0xff8875FF),
+          backgroundColor: backgroundColor,
           minimumSize: const Size.fromHeight(40)),
       child: child,
     );
