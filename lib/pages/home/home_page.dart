@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage>
                 children: [
                   Image.asset('assets/images/filter.png'),
                   const TextWidget(
-                    text: "Home screen",
+                    text: "Home",
                     fontSize: 20,
                     opacity: 0.87,
                   ),
