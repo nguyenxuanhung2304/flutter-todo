@@ -1,8 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_todo/components/text_widget.dart';
+import 'package:flutter_todo/pages/auth/sign_in_page.dart';
+import 'package:flutter_todo/pages/auth/sign_up_page.dart';
+import 'package:flutter_todo/helpers/shared_preferences_helper.dart';
 
-class StartupPage extends StatelessWidget {
+class StartupPage extends StatefulWidget {
   const StartupPage({super.key});
+
+  @override
+  State<StartupPage> createState() => _StartupPageState();
+}
+
+class _StartupPageState extends State<StartupPage> {
+  @override
+  void initState() {
+    super.initState();
+    _checkWelcomePage();
+  }
+
+  void _checkWelcomePage() {
+    SharedPreferencesHelper.getViewedWelcomePage().then((value) {
+      if (!value) {
+        print('_checkWelcomePage: setViewedWelcomePage');
+        print(value);
+        SharedPreferencesHelper.setViewedWelcomePage();
+      }
+    });
+  }
+
+  void _gotoSignUpPage(context) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => const SignUpPage()));
+  }
+
+  void _gotoSignInPage(context) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => const SignInPage()));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,21 +73,27 @@ class StartupPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   OutlinedButton(
-                    onPressed: null,
+                    onPressed: () {
+                      _gotoSignInPage(context);
+                    },
                     style: OutlinedButton.styleFrom(
-                      backgroundColor: const Color(0xff8875FF),
-                      minimumSize: const Size.fromHeight(40)
-                    ),
-                    child: const Text("LOGIN", style: TextStyle(color: Colors.white)),
+                        backgroundColor: const Color(0xff8875FF),
+                        minimumSize: const Size.fromHeight(40)),
+                    child: const Text("SIGN IN",
+                        style: TextStyle(color: Colors.white)),
                   ),
                   OutlinedButton(
-                    onPressed: null,
+                    onPressed: () {
+                      _gotoSignUpPage(context);
+                    },
                     style: OutlinedButton.styleFrom(
                       // backgroundColor: const Color(0xff8875FF),
                       minimumSize: const Size.fromHeight(40),
-                      side: const BorderSide(width: 2.0, color: Color(0xff8875FF)), 
+                      side: const BorderSide(
+                          width: 2.0, color: Color(0xff8875FF)),
                     ),
-                    child: const Text("CREATE ACCOUNT", style: TextStyle(color: Colors.white)),
+                    child: const Text("CREATE ACCOUNT",
+                        style: TextStyle(color: Colors.white)),
                   ),
                 ],
               ),
