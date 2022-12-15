@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_todo/pages/helpers/shared_preferences_helper.dart';
+import 'package:flutter_todo/helpers/shared_preferences_helper.dart';
 
 import 'package:flutter_todo/pages/home/home_page.dart';
 import 'package:flutter_todo/pages/startup/startup_page.dart';

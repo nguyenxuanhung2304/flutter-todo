@@ -1,13 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_todo/pages/auth/sign_up_page.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
+import 'package:flutter_todo/pages/auth/sign_up_page.dart';
 import 'package:flutter_todo/services/firebase_auth_service.dart';
 import 'package:flutter_todo/components/button_widget.dart';
 import 'package:flutter_todo/components/text_field_widget.dart';
 import 'package:flutter_todo/components/text_widget.dart';
 import 'package:flutter_todo/constants.dart' as constants;
 import 'package:flutter_todo/pages/home/home_page.dart';
+import 'package:flutter_todo/helpers/form_validator_helper.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -23,8 +25,7 @@ class _SignInPageState extends State<SignInPage> {
   bool _isSignInButtonDisabled = true;
   final _signInFormKey = GlobalKey<FormState>();
   String? _emailErrorMsg;
-
-  final _firebaseAuth = FirebaseAuthService();
+  bool _isLoading = false;
 
   _handleSignInAccount() async {
     if (_signInFormKey.currentState!.validate()) {
@@ -33,10 +34,13 @@ class _SignInPageState extends State<SignInPage> {
       });
 
       final navigator = Navigator.of(context);
+      setState(() {
+        _isLoading = true;
+      });
 
       try {
-        await _firebaseAuth.signInWithEmailAndPassword(
-            _email.text, _password.text);
+        await FirebaseAuthService()
+            .signInWithEmailAndPassword(_email.text, _password.text);
 
         navigator.pushAndRemoveUntil(
             MaterialPageRoute(
@@ -45,22 +49,13 @@ class _SignInPageState extends State<SignInPage> {
             (Route<dynamic> route) => false);
       } on FirebaseAuthException catch (e) {
         setState(() {
-          _emailErrorMsg = _getMessageFromErrorCode(e.code);
+          _emailErrorMsg =
+              FirebaseAuthService().getMessageFromErrorCode(e.code);
         });
       }
-    }
-  }
-
-  String _getMessageFromErrorCode(errorCode) {
-    switch (errorCode) {
-      case constants.userNotFound:
-        return "No user found with this email.";
-      case constants.wrongPassword:
-        return "Email or password is invalid. Please try again";
-      case constants.invalidEmail:
-        return "Email address is invalid";
-      default:
-        return "Sign in failed. Please try again";
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -78,14 +73,13 @@ class _SignInPageState extends State<SignInPage> {
 
   Future<void> _handleSignInWithGoogle(context) async {
     try {
-      final authService = FirebaseAuthService();
-      await authService.signInWithEmailAndPassword(_email.text, _password.text);
+      await FirebaseAuthService().signInWithGoogle();
 
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => const HomePage()),
           (route) => false);
-    } catch (e) {
+    } on FirebaseAuthException catch (e) {
       print(e);
     }
   }
@@ -108,7 +102,7 @@ class _SignInPageState extends State<SignInPage> {
         child: Padding(
           padding: const EdgeInsets.only(left: 12, right: 12),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const TextWidget(
                 text: "Sign In",
@@ -123,13 +117,7 @@ class _SignInPageState extends State<SignInPage> {
                     label: "Email",
                     hint: "Enter your Email",
                     errorMsg: _emailErrorMsg,
-                    validator: (str) {
-                      if (str == null || str.isEmpty) {
-                        return "Enter a Email";
-                      }
-
-                      return null;
-                    },
+                    validator: FormValidatorHelper.emailValidator(),
                     onChanged: (value) => _handleValidateTextField(value)),
               ),
               Padding(
@@ -139,13 +127,7 @@ class _SignInPageState extends State<SignInPage> {
                     label: "Password",
                     hint: "Enter your password",
                     type: constants.passwordField,
-                    validator: (str) {
-                      if (str == null || str.isEmpty) {
-                        return "Enter your password";
-                      }
-
-                      return null;
-                    },
+                    validator: FormValidatorHelper.passwordValidator(),
                     onChanged: (value) => _handleValidateTextField(value)),
               ),
               Padding(
@@ -185,6 +167,10 @@ class _SignInPageState extends State<SignInPage> {
                           const TextWidget(text: "Continue with Google"),
                         ],
                       ))),
+              _isLoading ? const Padding(
+                padding: EdgeInsets.only(top: 50),
+                child: SpinKitRing(color: Colors.white),
+              ) : Container(),
               Expanded(
                   child: Align(
                       alignment: Alignment.bottomCenter,

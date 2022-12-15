@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_todo/helpers/form_validator_helper.dart';
 import 'package:flutter_todo/pages/auth/sign_in_page.dart';
 import 'package:flutter_todo/services/firebase_auth_service.dart';
 
@@ -23,12 +25,14 @@ class _SignUpPageState extends State<SignUpPage> {
   bool _isSignUpButtonDisabled = true;
   final _registerFormKey = GlobalKey<FormState>();
   String? _emailErrorMsg;
-  final _firebaseAuth = FirebaseAuthService();
+  bool _isLoading = false;
 
   Future<void> _handleSignInWithGoogle(context) async {
+    setState(() {
+      _isLoading = true;
+    });
     try {
-      final authService = FirebaseAuthService();
-      await authService.signInWithGoogle();
+      await FirebaseAuthService().signInWithGoogle();
 
       Navigator.pushAndRemoveUntil(
           context,
@@ -37,6 +41,10 @@ class _SignUpPageState extends State<SignUpPage> {
     } catch (e) {
       print(e);
     }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   _handleRegisterAccount() async {
@@ -48,8 +56,8 @@ class _SignUpPageState extends State<SignUpPage> {
       final navigator = Navigator.of(context);
 
       try {
-        await _firebaseAuth.createUserWithEmailAndPassword(
-            _email.text, _password.text);
+        await FirebaseAuthService()
+            .createUserWithEmailAndPassword(_email.text, _password.text);
       } catch (e) {
         setState(() {
           _emailErrorMsg = "The email address is already being used.";
@@ -69,25 +77,13 @@ class _SignUpPageState extends State<SignUpPage> {
         .push(MaterialPageRoute(builder: (context) => const SignInPage()));
   }
 
-  _invalidEmail() {
-    return RegExp(
-            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-        .hasMatch(_email.text);
-  }
-
   _handleValidateTextField(newText) {
     if (_email.text.isNotEmpty &&
         _password.text.isNotEmpty &&
         _confirmPassword.text.isNotEmpty) {
-      if (_invalidEmail()) {
-        setState(() {
-          _isSignUpButtonDisabled = false;
-        });
-      } else {
-        setState(() {
-          _emailErrorMsg = "The email address is badly formatted";
-        });
-      }
+      setState(() {
+        _isSignUpButtonDisabled = false;
+      });
     } else {
       setState(() {
         _isSignUpButtonDisabled = true;
@@ -108,7 +104,7 @@ class _SignUpPageState extends State<SignUpPage> {
         child: Padding(
           padding: const EdgeInsets.only(left: 12, right: 12),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const TextWidget(
                 text: "Sign Up",
@@ -123,15 +119,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     label: "Email",
                     hint: "Enter your Email",
                     errorMsg: _emailErrorMsg,
-                    validator: (str) {
-                      if (str == null || str.isEmpty) {
-                        return "Enter a Email";
-                      } else if (str.length < 6) {
-                        return "Email is too short";
-                      }
-
-                      return null;
-                    },
+                    validator: FormValidatorHelper.emailValidator(),
                     onChanged: (value) => _handleValidateTextField(value)),
               ),
               Padding(
@@ -141,13 +129,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     label: "Password",
                     hint: "Enter your password",
                     type: constants.passwordField,
-                    validator: (str) {
-                      if (str == null || str.isEmpty) {
-                        return "Enter your password";
-                      }
-
-                      return null;
-                    },
+                    validator: FormValidatorHelper.passwordValidator(),
                     onChanged: (value) => _handleValidateTextField(value)),
               ),
               Padding(
@@ -157,17 +139,9 @@ class _SignUpPageState extends State<SignUpPage> {
                     label: "Confirm Password",
                     hint: "Enter your confirm password",
                     type: constants.passwordField,
-                    validator: (str) {
-                      if (str == null || str.isEmpty) {
-                        return "Enter your confirm password";
-                      }
-
-                      if (str != _password.text) {
-                        return "Password and confirm password is not match";
-                      }
-
-                      return null;
-                    },
+                    validator: (confirmPassword) =>
+                        FormValidatorHelper.confirmPasswordValidator(
+                            _password.text, confirmPassword),
                     onChanged: (value) => _handleValidateTextField(value)),
               ),
               Padding(
@@ -207,6 +181,12 @@ class _SignUpPageState extends State<SignUpPage> {
                           const TextWidget(text: "Continue with Google"),
                         ],
                       ))),
+              _isLoading
+                  ? const Padding(
+                      padding: EdgeInsets.only(top: 50),
+                      child: SpinKitRing(color: Colors.white),
+                    )
+                  : Container(),
               Expanded(
                   child: Align(
                       alignment: Alignment.bottomCenter,

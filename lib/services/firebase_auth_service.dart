@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_todo/constants.dart' as constants;
 
 class FirebaseAuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -32,5 +33,18 @@ class FirebaseAuthService {
 
     await _firebaseAuth.signInWithEmailAndPassword(
         email: email, password: password);
+  }
+
+  String getMessageFromErrorCode(errorCode) {
+    switch (errorCode) {
+      case constants.userNotFound:
+        return "No user found with this email.";
+      case constants.wrongPassword:
+        return "Email or password is invalid. Please try again";
+      case constants.invalidEmail:
+        return "Email address is invalid";
+      default:
+        return "";
+    }
   }
 }

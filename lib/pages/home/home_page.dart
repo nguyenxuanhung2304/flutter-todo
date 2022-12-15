@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_todo/components/button_widget.dart';
 import 'package:flutter_todo/components/text_widget.dart';
 import 'package:flutter_todo/pages/auth/sign_in_page.dart';
-import 'package:flutter_todo/pages/auth/sign_up_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_todo/pages/auth/sign_in_page.dart';
 import 'package:flutter_todo/pages/auth/sign_up_page.dart';
-import 'package:flutter_todo/pages/helpers/shared_preferences_helper.dart';
+import 'package:flutter_todo/helpers/shared_preferences_helper.dart';
 
 class StartupPage extends StatefulWidget {
   const StartupPage({super.key});
