@@ -28,8 +28,8 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     return MaterialApp(
       home: DefaultTabController(
-        length: 4,
-        child: Scaffold(
+          length: 4,
+          child: Scaffold(
             backgroundColor: Colors.black,
             bottomNavigationBar: ColoredBox(
               color: const Color(0xff363636),
@@ -95,20 +95,14 @@ class _HomePageState extends State<HomePage>
                 ],
               ),
             ),
-            floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-            floatingActionButton: Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              padding: const EdgeInsets.only(bottom: 42),
-              child: FloatingActionButton(
-                backgroundColor: const Color(0xff8875FF),
-                onPressed: () {}, 
-                child: const Icon(Icons.add),
-              ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.miniCenterDocked,
+            floatingActionButton: FloatingActionButton(
+              backgroundColor: const Color(0xff8875FF),
+              onPressed: () {},
+              child: const Icon(Icons.add),
             ),
-          ),
-        )
-      ),
+          )),
     );
   }
 }
